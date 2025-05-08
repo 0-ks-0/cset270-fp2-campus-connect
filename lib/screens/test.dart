@@ -17,6 +17,14 @@ class _TestState extends State<Test>
 {
   FirestoreService fs = FirestoreService();
 
+  void update({String? docId})
+  {
+    if (docId != null)
+    {
+      fs.updatePost(docId, "new title", "updating");
+    }
+  }
+
   @override
   Widget build(BuildContext context)
   {
@@ -69,6 +77,7 @@ class _TestState extends State<Test>
                   Text(content),
                   Text(formattedTimestamp),
                   Text(userId),
+                  IconButton(onPressed: () => update(docId: docId), icon: Icon(Icons.edit)),
                 ],
               );
             },
