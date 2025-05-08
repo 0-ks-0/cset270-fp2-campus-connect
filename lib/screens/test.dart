@@ -10,17 +10,15 @@ class Test extends StatelessWidget
   Widget build(BuildContext context)
   {
     return Scaffold(
-      body: Center(
-        child: ElevatedButton(
-          onPressed: ()
-          {
-            FirestoreService fs = FirestoreService();
-            fs.createPost("code test", "created through code", "k", null);
-            fs.createPost("code test 2", "created through code", "k", DateTime.now());
-          },
+      floatingActionButton: FloatingActionButton(
+        onPressed: ()
+        {
+          FirestoreService fs = FirestoreService();
+          fs.createPost("code test", "created through code", "k", null);
+          fs.createPost("code test 2", "created through code", "k", DateTime.now());
+        },
 
-          child: Text("Click me")
-        ),
+        child: Icon(Icons.add),
       ),
     );
   }
