@@ -5,7 +5,7 @@ class FirestoreService
   var postsCollection = FirebaseFirestore.instance.collection("posts");
 
   /// Creates a post
-  void createPost(String title, String content, String author, DateTime? timestamp)
+  Future<void> createPost(String title, String content, String author, DateTime? timestamp) async
   {
     postsCollection.add({
       "title": title,
