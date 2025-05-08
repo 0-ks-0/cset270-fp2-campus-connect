@@ -14,4 +14,10 @@ class FirestoreService
       "author": author
     });
   }
+
+  /// Get all post as a Stream
+  Stream<QuerySnapshot> getPostsStream()
+  {
+    return postsCollection.orderBy("timestamp", descending: true).snapshots();
+  }
 }
