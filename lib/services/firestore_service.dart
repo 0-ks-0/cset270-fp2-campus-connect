@@ -31,4 +31,10 @@ class FirestoreService
         "content": content
       });
   }
+
+  /// Delete a post
+  Future<void> deletePost(String docId)
+  {
+    return postsCollection.doc(docId).delete();
+  }
 }

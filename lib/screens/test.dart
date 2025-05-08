@@ -78,6 +78,7 @@ class _TestState extends State<Test>
                   Text(formattedTimestamp),
                   Text(userId),
                   IconButton(onPressed: () => update(docId: docId), icon: Icon(Icons.edit)),
+                  IconButton(onPressed: () => fs.deletePost(docId), icon: Icon(Icons.delete)),
                 ],
               );
             },
