@@ -5,6 +5,8 @@ import "package:campus_connect/util/primary_button.dart";
 
 import "package:campus_connect/screens/register_screen.dart";
 import "package:campus_connect/screens/home_screen.dart";
+import 'package:campus_connect/services/auth_service.dart';
+
 
 class LoginPage extends StatefulWidget
 {
@@ -114,29 +116,26 @@ class _LoginPageState extends State<LoginPage>
 
                     // Login button
                     PrimaryButton(
-                      onTap: ()
-                      {
-                        if (formKey.currentState == null)
-                        {
-                          return;
-                        }
+                      onTap: () async {
+                        if (formKey.currentState == null) return;
+                        if (!formKey.currentState!.validate()) return;
 
-                        // Fails validation
-                        if (!formKey.currentState!.validate())
-                        {
-                          formKey.currentState!.save();
+                        final email = controllerEmail.text.trim();
+                        final password = controllerPassword.text.trim();
 
-                          return;
-                        }
+                        AuthService authService = AuthService();
 
-                        // Success
-                        Navigator.pushAndRemoveUntil(
-                          context,
-                          MaterialPageRoute(builder: (context) => HomePage()),
-                          (r) => false
-                        );
+                        authService.signIn(context, email, password).then((user) {
+                          if (user != null) {
+                            Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(builder: (context) => const HomePage()),
+                                    (r) => false
+                            );
+                          }
+                        });
+
                       },
-
                       text: "Login",
                     )
                   ],

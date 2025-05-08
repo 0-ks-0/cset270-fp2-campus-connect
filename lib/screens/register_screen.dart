@@ -4,6 +4,8 @@ import "package:campus_connect/util/text_field.dart";
 import "package:campus_connect/util/primary_button.dart";
 
 import "package:campus_connect/screens/login_screen.dart";
+import "package:campus_connect/services/auth_service.dart";
+
 
 class SignUpPage extends StatefulWidget
 {
@@ -171,28 +173,45 @@ class _SignUpPageState extends State<SignUpPage>
 
                     // Sign up button
                     PrimaryButton(
-                      onTap: ()
-                      {
-                        if (formKey.currentState == null)
-                        {
+                      onTap: () async {
+                        if (formKey.currentState == null) {
                           return;
                         }
 
-                        // Fails validation
-                        if (!formKey.currentState!.validate())
-                        {
-                          formKey.currentState!.save();
-
+                        // Validate the form
+                        if (!formKey.currentState!.validate()) {
                           return;
                         }
 
-                        // Success
-                        Navigator.pushAndRemoveUntil(
-                          context,
-                          MaterialPageRoute(builder: (context) => LoginPage()),
-                          (r) => false
-                        );
+                        // Get user input
+                        final email = controllerEmail.text.trim();
+                        final password = controllerPassword.text.trim();
+
+                        AuthService authService = AuthService();
+
+                        authService.register(context, email, password).then((user) {
+                          if (user != null) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text("Account created successfully! Please log in."),
+                                duration: Duration(seconds: 2),
+                              ),
+                            );
+
+                            Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(builder: (context) => const LoginPage()),
+                                    (r) => false
+                            );
+                          }
+                        }).catchError((error) {
+                          // Show error if registration fails
+                          ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text(error.toString()))
+                          );
+                        });
                       },
+
 
                       text: "Sign Up",
                     )
