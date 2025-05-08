@@ -14,8 +14,9 @@ class Test extends StatelessWidget
         child: ElevatedButton(
           onPressed: ()
           {
-            FireStoreService fs = FireStoreService();
-            fs.createPost("code test", "created through code", DateTime.now(), "k");
+            FirestoreService fs = FirestoreService();
+            fs.createPost("code test", "created through code", "k", null);
+            fs.createPost("code test 2", "created through code", "k", DateTime.now());
           },
 
           child: Text("Click me")
