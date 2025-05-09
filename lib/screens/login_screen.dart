@@ -14,8 +14,7 @@ class LoginPage extends StatefulWidget
   State<LoginPage> createState() => _LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage>
-{
+class _LoginPageState extends State<LoginPage> {
   final formKey = GlobalKey<FormState>();
 
   final controllerEmail = TextEditingController();
@@ -24,165 +23,164 @@ class _LoginPageState extends State<LoginPage>
   bool passwordIsObscure = true;
 
   // Toggle password visibility
-  void togglePasswordVisibility()
-  {
-    setState(()
-    {
+  void togglePasswordVisibility() {
+    setState(() {
       passwordIsObscure = !passwordIsObscure;
     });
   }
 
   @override
-  Widget build(BuildContext context)
-  {
+  Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
-
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
-
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-
-            spacing: 28,
-
-            children: [
-              // Header
-              Text(
-                "Welcome back",
-
-                style: TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold
+        child: Stack(
+          children: [
+            // Background Image
+            Container(
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage("assets/homepage.jpg"),
+                  fit: BoxFit.cover,
                 ),
               ),
+            ),
 
-              // Form
-              Form(
-                key: formKey,
+            // Dark overlay
+            Container(color: Colors.black.withOpacity(0.5)),
 
-                child: Column(
-                  spacing: 20,
+            // Main Content
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+              child: Center(
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      // Logo
+                      Container(
+                        height: 250,
+                        width: 270,
+                        decoration: BoxDecoration(
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.white.withOpacity(0.3),
+                              blurRadius: 50,
+                              spreadRadius: 20,
+                            ),
+                          ],
+                        ),
+                        child: Image.asset('assets/logo.png'),
+                      ),
 
-                  children: [
-                    // Email input
-                    MyTextField(
-                      controller: controllerEmail,
+                      SizedBox(height: 28),
 
-                      hintText: "Enter your email address",
-                      obscureText: false,
-
-                      suffixIcon: null,
-
-                      validator: (value)
-                      {
-                        if (value == null || value.isEmpty)
-                        {
-                          return "Please enter your email";
-                        }
-
-                        return null;
-                      },
-                    ),
-
-                    // Password input
-                    MyTextField(
-                      controller: controllerPassword,
-
-                      hintText: "Enter your password",
-                      obscureText: passwordIsObscure,
-
-                      suffixIcon: IconButton(
-                        onPressed: togglePasswordVisibility,
-                        icon: Icon(
-                          passwordIsObscure ? Icons.visibility : Icons.visibility_off
+                      Text(
+                        "Welcome back!",
+                        style: TextStyle(
+                          fontSize: 28,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                          shadows: [
+                            Shadow(
+                              offset: Offset(2.0, 2.0),
+                              blurRadius: 3.0,
+                              color: Colors.black.withOpacity(0.5),
+                            ),
+                          ],
                         ),
                       ),
 
-                      validator: (value)
-                      {
-                        if (value == null || value.isEmpty)
-                        {
-                          return "Please enter your password";
-                        }
+                      SizedBox(height: 20),
 
-                        return null;
-                      },
-                    ),
+                      // Form
+                      Form(
+                        key: formKey,
+                        child: Column(
+                          children: [
+                            MyTextField(
+                              controller: controllerEmail,
+                              hintText: "Enter your email address",
+                              obscureText: false,
+                              suffixIcon: null,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return "Please enter your email";
+                                }
+                                return null;
+                              },
+                            ),
+                            SizedBox(height: 20),
+                            MyTextField(
+                              controller: controllerPassword,
+                              hintText: "Enter your password",
+                              obscureText: passwordIsObscure,
+                              suffixIcon: IconButton(
+                                onPressed: togglePasswordVisibility,
+                                icon: Icon(passwordIsObscure
+                                    ? Icons.visibility
+                                    : Icons.visibility_off),
+                              ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return "Please enter your password";
+                                }
+                                return null;
+                              },
+                            ),
+                            SizedBox(height: 20),
+                            PrimaryButton(
+                              onTap: () {
+                                if (formKey.currentState?.validate() ?? false) {
+                                  Navigator.pushAndRemoveUntil(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => HomePage()),
+                                        (r) => false,
+                                  );
+                                }
+                              },
+                              text: "Login",
+                            ),
+                          ],
+                        ),
+                      ),
 
-                    // Login button
-                    PrimaryButton(
-                      onTap: ()
-                      {
-                        if (formKey.currentState == null)
-                        {
-                          return;
-                        }
+                      SizedBox(height: 20),
 
-                        // Fails validation
-                        if (!formKey.currentState!.validate())
-                        {
-                          formKey.currentState!.save();
-
-                          return;
-                        }
-
-                        // Success
-                        Navigator.pushAndRemoveUntil(
-                          context,
-                          MaterialPageRoute(builder: (context) => HomePage()),
-                          (r) => false
-                        );
-                      },
-
-                      text: "Login",
-                    )
-                  ],
+                      // Sign-up link
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            "Don't have an account?",
+                            style: TextStyle(fontSize: 16, color: Colors.white),
+                          ),
+                          SizedBox(width: 6),
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => SignUpPage()),
+                              );
+                            },
+                            child: Text(
+                              "Sign up",
+                              style: TextStyle(
+                                  color: Colors.orange,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
-
-              // Sign up link
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-
-                spacing: 6,
-
-                children: [
-                  // Don't have an account
-                  Text(
-                    "Don't have an account?",
-
-                    style: TextStyle(
-                      fontSize: 16,
-                    ),
-                  ),
-
-                  // Login Link
-                  GestureDetector(
-                    onTap: ()
-                    {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => SignUpPage()),
-                      );
-                    },
-
-                    child: Text(
-                      "Sign up",
-                      style: TextStyle(
-                        color: Colors.blue,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        )
+            ),
+          ],
+        ),
       ),
     );
   }

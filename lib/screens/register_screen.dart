@@ -13,8 +13,7 @@ class SignUpPage extends StatefulWidget
   State<SignUpPage> createState() => _SignUpPageState();
 }
 
-class _SignUpPageState extends State<SignUpPage>
-{
+class _SignUpPageState extends State<SignUpPage> {
   final formKey = GlobalKey<FormState>();
 
   final controllerEmail = TextEditingController();
@@ -27,219 +26,220 @@ class _SignUpPageState extends State<SignUpPage>
   String errorMessage = "";
 
   // Toggle password visibility
-  void togglePasswordVisibility()
-  {
-    setState(()
-    {
+  void togglePasswordVisibility() {
+    setState(() {
       passwordIsObscure = !passwordIsObscure;
     });
   }
 
   // Toggle password visibility
-  void togglePasswordConfirmVisibility()
-  {
-    setState(()
-    {
+  void togglePasswordConfirmVisibility() {
+    setState(() {
       passwordConfirmIsObscure = !passwordConfirmIsObscure;
     });
   }
 
   @override
-  Widget build(BuildContext context)
-  {
+  Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
-
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
-
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-
-            spacing: 28,
-
-            children: [
-              // Header
-              Text(
-                "Create an account",
-
-                style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold
+        child: Stack(
+          children: [
+            // Background image
+            Container(
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage("assets/homepage.jpg"),
+                  fit: BoxFit.cover,
                 ),
               ),
+            ),
 
-              // Form
-              Form(
-                key: formKey,
+            // Dark overlay
+            Container(
+              color: Colors.black.withOpacity(0.5),
+            ),
 
-                child: Column(
-                  spacing: 20,
+            // Main content
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+              child: Center(
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Container(
+                        height: 250,
+                        width: 270,
+                        decoration: BoxDecoration(
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.white.withOpacity(0.3),
+                              blurRadius: 50,
+                              spreadRadius: 20,
+                            ),
+                          ],
+                        ),
+                        child: Image.asset('assets/logo.png'),
+                      ),
 
-                  children: [
-                    // Email input
-                    MyTextField(
-                      controller: controllerEmail,
+                      SizedBox(height: 28),
 
-                      hintText: "Enter your email address",
-                      obscureText: false,
-
-                      suffixIcon: null,
-
-                      validator: (value)
-                      {
-                        if (value == null || value.isEmpty)
-                        {
-                          return "Please enter your email";
-                        }
-
-                        String pattern = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$";
-                        RegExp regex = RegExp(pattern);
-
-                        if (!regex.hasMatch(value))
-                        {
-                          return "Please enter a valid email";
-                        }
-
-                        return null;
-                      },
-                    ),
-
-                    // Password input
-                    MyTextField(
-                      controller: controllerPassword,
-
-                      hintText: "Enter your password",
-                      obscureText: passwordIsObscure,
-
-                      suffixIcon: IconButton(
-                        onPressed: togglePasswordVisibility,
-                        icon: Icon(
-                          passwordIsObscure ? Icons.visibility : Icons.visibility_off
+                      // Title
+                      Text(
+                        "Create an account",
+                        style: TextStyle(
+                          fontSize: 28,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                          shadows: [
+                            Shadow(
+                              offset: Offset(2.0, 2.0),
+                              blurRadius: 3.0,
+                              color: Colors.black.withOpacity(0.5),
+                            ),
+                          ],
                         ),
                       ),
 
-                      validator: (value)
-                      {
-                        if (value == null || value.isEmpty)
-                        {
-                          return "Please enter your password";
-                        }
+                      SizedBox(height: 20),
 
-                        if (controllerPassword.text != controllerPasswordConfirm.text)
-                        {
-                          errorMessage += "Passwords do not match";
-                          return "Passwords do not match";
-                        }
+                      // Form
+                      Form(
+                        key: formKey,
+                        child: Column(
+                          children: [
+                            MyTextField(
+                              controller: controllerEmail,
+                              hintText: "Enter your email address",
+                              obscureText: false,
+                              suffixIcon: null,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return "Please enter your email";
+                                }
+                                String pattern =
+                                    r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$";
+                                RegExp regex = RegExp(pattern);
+                                if (!regex.hasMatch(value)) {
+                                  return "Please enter a valid email";
+                                }
+                                return null;
+                              },
+                            ),
 
-                        return null;
-                      },
-                    ),
+                            SizedBox(height: 20),
 
-                    // Confirm password input
-                    MyTextField(
-                      controller: controllerPasswordConfirm,
+                            MyTextField(
+                              controller: controllerPassword,
+                              hintText: "Enter your password",
+                              obscureText: passwordIsObscure,
+                              suffixIcon: IconButton(
+                                onPressed: togglePasswordVisibility,
+                                icon: Icon(
+                                  passwordIsObscure
+                                      ? Icons.visibility
+                                      : Icons.visibility_off,
+                                ),
+                              ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return "Please enter your password";
+                                }
+                                if (controllerPassword.text !=
+                                    controllerPasswordConfirm.text) {
+                                  return "Passwords do not match";
+                                }
+                                return null;
+                              },
+                            ),
 
-                      hintText: "Enter your password again",
-                      obscureText: passwordConfirmIsObscure,
+                            SizedBox(height: 20),
 
-                      suffixIcon: IconButton(
-                        onPressed: togglePasswordConfirmVisibility,
-                        icon: Icon(
-                          passwordConfirmIsObscure ? Icons.visibility : Icons.visibility_off
+                            MyTextField(
+                              controller: controllerPasswordConfirm,
+                              hintText: "Enter your password again",
+                              obscureText: passwordConfirmIsObscure,
+                              suffixIcon: IconButton(
+                                onPressed: togglePasswordConfirmVisibility,
+                                icon: Icon(
+                                  passwordConfirmIsObscure
+                                      ? Icons.visibility
+                                      : Icons.visibility_off,
+                                ),
+                              ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return "Please confirm your password";
+                                }
+                                if (controllerPassword.text !=
+                                    controllerPasswordConfirm.text) {
+                                  return "Passwords do not match";
+                                }
+                                return null;
+                              },
+                            ),
+
+                            SizedBox(height: 20),
+
+                            PrimaryButton(
+                              onTap: () {
+                                if (formKey.currentState == null) return;
+
+                                if (!formKey.currentState!.validate()) {
+                                  formKey.currentState!.save();
+                                  return;
+                                }
+
+                                Navigator.pushAndRemoveUntil(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => LoginPage()),
+                                      (r) => false,
+                                );
+                              },
+                              text: "Sign Up",
+                            ),
+                          ],
                         ),
                       ),
 
-                      validator: (value)
-                      {
-                        if (value == null || value.isEmpty)
-                        {
-                          return "Please enter your password";
-                        }
+                      SizedBox(height: 20),
 
-                        if (controllerPassword.text != controllerPasswordConfirm.text)
-                        {
-                          errorMessage += "Passwords do not match";
-                          return "Passwords do not match";
-                        }
-
-                        return null;
-                      },
-                    ),
-
-                    // Sign up button
-                    PrimaryButton(
-                      onTap: ()
-                      {
-                        if (formKey.currentState == null)
-                        {
-                          return;
-                        }
-
-                        // Fails validation
-                        if (!formKey.currentState!.validate())
-                        {
-                          formKey.currentState!.save();
-
-                          return;
-                        }
-
-                        // Success
-                        Navigator.pushAndRemoveUntil(
-                          context,
-                          MaterialPageRoute(builder: (context) => LoginPage()),
-                          (r) => false
-                        );
-                      },
-
-                      text: "Sign Up",
-                    )
-
-                  ],
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            "Already have an account?",
+                            style: TextStyle(fontSize: 16, color: Colors.white),
+                          ),
+                          SizedBox(width: 6),
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => LoginPage()),
+                              );
+                            },
+                            child: Text(
+                              "Login",
+                              style: TextStyle(
+                                color: Colors.orange,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
-
-              // Login link
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-
-                spacing: 6,
-
-                children: [
-                  // Already have an account
-                  Text(
-                    "Already have an account?",
-
-                    style: TextStyle(
-                      fontSize: 16,
-                    ),
-                  ),
-
-                  // Login Link
-                  GestureDetector(
-                    onTap: ()
-                    {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => LoginPage()),
-                      );
-                    },
-
-                    child: Text(
-                      "Login",
-                      style: TextStyle(
-                        color: Colors.blue,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
