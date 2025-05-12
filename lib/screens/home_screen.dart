@@ -1,33 +1,88 @@
-import "package:flutter/material.dart";
-
+import 'package:flutter/material.dart';
 import 'package:campus_connect/screens/create_post_screen.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final List<Map<String, String>> models = [
-      {
-        "title": "Test1",
-        "content": "Test1",
-        "timestamp": "May 2, 2025 10:30 AM",
-        "author": "Admin",
-      },
-      {
-        "title": "Club Meeting",
-        "content": "Something something.",
-        "timestamp": "May 7, 2025 6:00 PM",
-        "author": "Gage Cooper",
-      },
-      {
-        "title": "TEST TIMEEE",
-        "content": "Time for your testssss",
-        "timestamp": "May 6, 2025 2:15 PM",
-        "author": "Nick Helock",
-      },
-    ];
+  State<HomePage> createState() => _HomePageState();
+}
 
+class _HomePageState extends State<HomePage> {
+  List<Map<String, String>> models = [
+    {
+      "title": "Test1",
+      "content":
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor.",
+      "timestamp": "May 2, 2025 10:30 AM",
+      "author": "Admin",
+    },
+    {
+      "title": "Club Meeting",
+      "content":
+      "Don't forget about the upcoming club meeting on Friday at 4 PM in the auditorium.",
+      "timestamp": "May 7, 2025 6:00 PM",
+      "author": "Gage Cooper",
+    },
+    {
+      "title": "TEST TIMEEE",
+      "content": "Time for your testssss",
+      "timestamp": "May 6, 2025 2:15 PM",
+      "author": "Nick Helock",
+    },
+  ];
+
+  void _showEditDialog(int index) {
+    final titleController = TextEditingController(text: models[index]['title']);
+    final contentController =
+    TextEditingController(text: models[index]['content']);
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: Colors.white,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12)),
+        title: Text('Edit Post'),
+        content: SingleChildScrollView(
+          child: Column(
+            children: [
+              TextFormField(
+                controller: titleController,
+                decoration: InputDecoration(labelText: 'Title'),
+              ),
+              SizedBox(height: 10),
+              TextFormField(
+                controller: contentController,
+                decoration: InputDecoration(labelText: 'Content'),
+                maxLines: 4,
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('Cancel', style: TextStyle(color: Colors.grey)),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.orange),
+            onPressed: () {
+              setState(() {
+                models[index]['title'] = titleController.text;
+                models[index]['content'] = contentController.text;
+              });
+              Navigator.pop(context);
+            },
+            child: Text('Save'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -38,13 +93,15 @@ class HomePage extends StatelessWidget {
             fontSize: 26,
             fontWeight: FontWeight.bold,
             color: Colors.black,
-            backgroundColor: Colors.orange,
           ),
         ),
-
       ),
       body: Stack(
         children: [
+
+
+
+
           Container(
             decoration: BoxDecoration(
               image: DecorationImage(
@@ -53,19 +110,17 @@ class HomePage extends StatelessWidget {
               ),
             ),
           ),
-
-          Container(
-            color: Colors.black.withOpacity(0.5),
-          ),
+          // Overlay
+          Container(color: Colors.black.withOpacity(0.5)),
 
           // Post list
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
             child: ListView.builder(
+              padding: const EdgeInsets.only(bottom: 100),
               itemCount: models.length,
               itemBuilder: (context, index) {
                 final post = models[index];
-
 
                 return Card(
                   color: Colors.white.withOpacity(0.9),
@@ -105,6 +160,49 @@ class HomePage extends StatelessWidget {
                             ),
                           ],
                         ),
+                        SizedBox(height: 10),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            TextButton(
+                              onPressed: () => _showEditDialog(index),
+                              style: TextButton.styleFrom(
+                                backgroundColor: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                              child: Text(
+                                "Edit",
+                                style: TextStyle(
+                                  color: Colors.orange,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            SizedBox(width: 10),
+                            TextButton(
+                              onPressed: () {
+                                setState(() {
+                                  models.removeAt(index);
+                                });
+                              },
+                              style: TextButton.styleFrom(
+                                backgroundColor: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                              child: Text(
+                                "Delete",
+                                style: TextStyle(
+                                  color: Colors.red,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ],
                     ),
                   ),
@@ -115,19 +213,26 @@ class HomePage extends StatelessWidget {
         ],
       ),
 
+
+      
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          Navigator.push(
+        onPressed: () async {
+          final newPost = await Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => CreatePostPage()),
           );
+
+          if (newPost != null && newPost is Map<String, String>) {
+            setState(() {
+              models.insert(0, newPost);
+            });
+          }
         },
         backgroundColor: Colors.orange,
         icon: Icon(Icons.add),
         label: Text("Create Post"),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-
     );
   }
 }

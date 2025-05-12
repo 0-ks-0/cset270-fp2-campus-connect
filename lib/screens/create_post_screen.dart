@@ -27,7 +27,6 @@ class _CreatePostPageState extends State<CreatePostPage> {
       body: SafeArea(
         child: Stack(
           children: [
-            // Background
             Container(
               decoration: BoxDecoration(
                 image: DecorationImage(
@@ -87,7 +86,6 @@ class _CreatePostPageState extends State<CreatePostPage> {
 
                       SizedBox(height: 20),
 
-                      // Form
                       Form(
                         key: formKey,
                         child: Column(
@@ -99,7 +97,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
                               suffixIcon: null,
                               validator: (value) =>
                               value == null || value.isEmpty
-                                  ? "Please enter a title"
+                                  ? "Enter a title"
                                   : null,
                             ),
 
@@ -118,44 +116,24 @@ class _CreatePostPageState extends State<CreatePostPage> {
 
                             SizedBox(height: 20),
 
-                            MyTextField(
-                              controller: controllerTimestamp,
-                              hintText: "Timestamp (e.g. January 1, 2025)",
-                              obscureText: false,
-                              suffixIcon: null,
-                              validator: (value) =>
-                              value == null || value.isEmpty
-                                  ? "Please enter timestamp"
-                                  : null,
-                            ),
-
-                            SizedBox(height: 20),
-
-                            MyTextField(
-                              controller: controllerAuthor,
-                              hintText: "Your Name",
-                              obscureText: false,
-                              suffixIcon: null,
-                              validator: (value) =>
-                              value == null || value.isEmpty
-                                  ? "Please enter author"
-                                  : null,
-                            ),
-
-                            SizedBox(height: 20),
-
                             PrimaryButton(
                               onTap: () {
-                                // No functionality yet
                                 if (formKey.currentState?.validate() ?? false) {
-                                  // Will save to DB later
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(content: Text("Post created!")),
-                                  );
+                                  final newPost = {
+                                    "title": controllerTitle.text,
+                                    "content": controllerContent.text,
+                                    "timestamp": DateTime.now().toString(),
+                                    "author": controllerAuthor.text.isNotEmpty
+                                        ? controllerAuthor.text
+                                        : "Nate Testing",
+                                  };
+
+                                  Navigator.pop(context, newPost);
                                 }
                               },
                               text: "Publish",
                             ),
+
                           ],
                         ),
                       ),
