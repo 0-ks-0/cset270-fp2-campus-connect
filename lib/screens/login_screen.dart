@@ -6,6 +6,8 @@ import "package:campus_connect/util/primary_button.dart";
 import "package:campus_connect/screens/register_screen.dart";
 import "package:campus_connect/screens/home_screen.dart";
 
+import "../services/auth_service.dart";
+
 class LoginPage extends StatefulWidget
 {
   const LoginPage({super.key});
@@ -114,32 +116,30 @@ class _LoginPageState extends State<LoginPage>
 
                     // Login button
                     PrimaryButton(
-                      onTap: ()
-                      {
-                        if (formKey.currentState == null)
-                        {
+                      onTap: () async {
+                        if (formKey.currentState == null) return;
+
+                        if (!formKey.currentState!.validate()) {
                           return;
                         }
 
-                        // Fails validation
-                        if (!formKey.currentState!.validate())
-                        {
-                          formKey.currentState!.save();
+                        final email = controllerEmail.text.trim();
+                        final password = controllerPassword.text.trim();
 
-                          return;
+                        final authService = AuthService();
+                        final user = await authService.signIn(context, email, password);
+
+                        if (user != null) {
+                          // Successful login
+                          Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(builder: (context) => const HomePage()),
+                                (route) => false,
+                          );
                         }
-
-                        // Success
-                        Navigator.pushAndRemoveUntil(
-                          context,
-                          MaterialPageRoute(builder: (context) => HomePage()),
-                          (r) => false
-                        );
-                      },
-
-                      text: "Login",
-                    )
-                  ],
+                        // If sign-in failed, AuthService already shows error dialog
+                      }, text: 'Login',
+                    )],
                 ),
               ),
 
