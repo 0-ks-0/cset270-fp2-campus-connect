@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:campus_connect/screens/create_post_screen.dart';
+import "package:campus_connect/screens/login_screen.dart";
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -85,6 +86,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+
         centerTitle: true,
         backgroundColor: Colors.orange,
         title: Text(
@@ -96,11 +98,34 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
       ),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            DrawerHeader(
+              child: Text(
+                'Campus Connect',
+                style: TextStyle(color: Colors.white, fontSize: 30),
+              ),
+              decoration: BoxDecoration(
+                color: Colors.orange,
+              ),
+            ),
+            ListTile(
+              title: Text('Logout'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => LoginPage()),
+                );
+              },
+            ),
+
+          ],
+        ),
+      ),
       body: Stack(
         children: [
-
-
-
 
           Container(
             decoration: BoxDecoration(
@@ -112,6 +137,9 @@ class _HomePageState extends State<HomePage> {
           ),
           // Overlay
           Container(color: Colors.black.withOpacity(0.5)),
+
+
+
 
           // Post list
           Padding(
@@ -160,7 +188,14 @@ class _HomePageState extends State<HomePage> {
                             ),
                           ],
                         ),
+
+
+
+
                         SizedBox(height: 10),
+
+
+
                         Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
@@ -214,7 +249,7 @@ class _HomePageState extends State<HomePage> {
       ),
 
 
-      
+
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () async {
           final newPost = await Navigator.push(
