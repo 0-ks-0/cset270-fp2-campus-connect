@@ -5,14 +5,19 @@ class FirestoreService
   var postsCollection = FirebaseFirestore.instance.collection("posts");
 
   /// Creates a post
-  Future<void> createPost(String title, String content, String author, DateTime? timestamp)
+  // Future<void> createPost(String title, String content, String author, DateTime? timestamp)
+  // {
+  //   return postsCollection.add({
+  //     "title": title,
+  //     "content": content,
+  //     "timestamp":  timestamp == null ? Timestamp.now() : Timestamp.fromDate(timestamp),
+  //     "author": author
+  //   });
+  // }
+
+  Future<void> createPost(Map<String, dynamic> map)
   {
-    return postsCollection.add({
-      "title": title,
-      "content": content,
-      "timestamp":  timestamp == null ? Timestamp.now() : Timestamp.fromDate(timestamp),
-      "author": author
-    });
+    return postsCollection.add(map);
   }
 
   /// Get all post as a Stream
