@@ -4,8 +4,6 @@ import "package:campus_connect/util/text_field.dart";
 import "package:campus_connect/util/primary_button.dart";
 
 import "package:campus_connect/screens/login_screen.dart";
-import "package:campus_connect/services/auth_service.dart";
-
 
 class SignUpPage extends StatefulWidget
 {
@@ -22,8 +20,6 @@ class _SignUpPageState extends State<SignUpPage>
   final controllerEmail = TextEditingController();
   final controllerPassword = TextEditingController();
   final controllerPasswordConfirm = TextEditingController();
-  final controllerUsername = TextEditingController();
-
 
   bool passwordIsObscure = true;
   bool passwordConfirmIsObscure = true;
@@ -111,20 +107,6 @@ class _SignUpPageState extends State<SignUpPage>
                       },
                     ),
 
-                    // Username input
-                    MyTextField(
-                      controller: controllerUsername,
-                      hintText: "Enter your username",
-                      obscureText: false,
-                      suffixIcon: null,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return "Please enter a username";
-                        }
-                        return null;
-                      },
-                    ),
-
                     // Password input
                     MyTextField(
                       controller: controllerPassword,
@@ -189,46 +171,28 @@ class _SignUpPageState extends State<SignUpPage>
 
                     // Sign up button
                     PrimaryButton(
-                      onTap: () async {
-                        if (formKey.currentState == null) {
+                      onTap: ()
+                      {
+                        if (formKey.currentState == null)
+                        {
                           return;
                         }
 
-                        // Validate the form
-                        if (!formKey.currentState!.validate()) {
+                        // Fails validation
+                        if (!formKey.currentState!.validate())
+                        {
+                          formKey.currentState!.save();
+
                           return;
                         }
 
-                        // Get user input
-                        final username = controllerUsername.text.trim();
-                        final email = controllerEmail.text.trim();
-                        final password = controllerPassword.text.trim();
-
-                        AuthService authService = AuthService();
-
-                        authService.register(context, email, password, username).then((user) {
-                          if (user != null) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text("Account created successfully! Please log in."),
-                                duration: Duration(seconds: 2),
-                              ),
-                            );
-
-                            Navigator.pushAndRemoveUntil(
-                                context,
-                                MaterialPageRoute(builder: (context) => const LoginPage()),
-                                    (r) => false
-                            );
-                          }
-                        }).catchError((error) {
-                          // Show error if registration fails
-                          ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text(error.toString()))
-                          );
-                        });
+                        // Success
+                        Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(builder: (context) => LoginPage()),
+                          (r) => false
+                        );
                       },
-
 
                       text: "Sign Up",
                     )
