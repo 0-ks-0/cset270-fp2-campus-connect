@@ -22,6 +22,8 @@ class _SignUpPageState extends State<SignUpPage>
   final controllerEmail = TextEditingController();
   final controllerPassword = TextEditingController();
   final controllerPasswordConfirm = TextEditingController();
+  final controllerUsername = TextEditingController();
+
 
   bool passwordIsObscure = true;
   bool passwordConfirmIsObscure = true;
@@ -109,6 +111,20 @@ class _SignUpPageState extends State<SignUpPage>
                       },
                     ),
 
+                    // Username input
+                    MyTextField(
+                      controller: controllerUsername,
+                      hintText: "Enter your username",
+                      obscureText: false,
+                      suffixIcon: null,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return "Please enter a username";
+                        }
+                        return null;
+                      },
+                    ),
+
                     // Password input
                     MyTextField(
                       controller: controllerPassword,
@@ -184,12 +200,13 @@ class _SignUpPageState extends State<SignUpPage>
                         }
 
                         // Get user input
+                        final username = controllerUsername.text.trim();
                         final email = controllerEmail.text.trim();
                         final password = controllerPassword.text.trim();
 
                         AuthService authService = AuthService();
 
-                        authService.register(context, email, password).then((user) {
+                        authService.register(context, email, password, username).then((user) {
                           if (user != null) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
