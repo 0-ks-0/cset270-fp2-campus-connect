@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:campus_connect/util/text_field.dart';
 import 'package:campus_connect/util/primary_button.dart';
-import 'package:campus_connect/screens/login_screen.dart';
+import 'package:campus_connect/models/post.dart';
 
 class CreatePostPage extends StatefulWidget {
   const CreatePostPage({super.key});
@@ -15,8 +17,6 @@ class _CreatePostPageState extends State<CreatePostPage> {
 
   final controllerTitle = TextEditingController();
   final controllerContent = TextEditingController();
-  final controllerTimestamp = TextEditingController();
-  final controllerAuthor = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -28,28 +28,24 @@ class _CreatePostPageState extends State<CreatePostPage> {
         child: Stack(
           children: [
             Container(
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 image: DecorationImage(
                   image: AssetImage("assets/homepage.jpg"),
                   fit: BoxFit.cover,
                 ),
               ),
             ),
-            // Overlay
             Container(
               color: Colors.black.withOpacity(0.5),
             ),
-
-            // Main Content
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
               child: Center(
                 child: SingleChildScrollView(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      // Logo with glow
+                      // Logo
                       Container(
                         height: 250,
                         width: 270,
@@ -65,10 +61,9 @@ class _CreatePostPageState extends State<CreatePostPage> {
                         child: Image.asset('assets/logo.png'),
                       ),
 
-                      SizedBox(height: 28),
+                      const SizedBox(height: 28),
 
-                      // Title
-                      Text(
+                      const Text(
                         "Create a Post",
                         style: TextStyle(
                           fontSize: 28,
@@ -78,13 +73,13 @@ class _CreatePostPageState extends State<CreatePostPage> {
                             Shadow(
                               offset: Offset(2.0, 2.0),
                               blurRadius: 3.0,
-                              color: Colors.black.withOpacity(0.5),
+                              color: Colors.black54,
                             ),
                           ],
                         ),
                       ),
 
-                      SizedBox(height: 20),
+                      const SizedBox(height: 20),
 
                       Form(
                         key: formKey,
@@ -96,50 +91,54 @@ class _CreatePostPageState extends State<CreatePostPage> {
                               obscureText: false,
                               suffixIcon: null,
                               validator: (value) =>
-                              value == null || value.isEmpty
-                                  ? "Enter a title"
-                                  : null,
+                              value == null || value.isEmpty ? "Enter a title" : null,
                             ),
-
-                            SizedBox(height: 20),
-
+                            const SizedBox(height: 20),
                             MyTextField(
                               controller: controllerContent,
                               hintText: "Content",
                               obscureText: false,
                               suffixIcon: null,
                               validator: (value) =>
-                              value == null || value.isEmpty
-                                  ? "Please enter content"
-                                  : null,
+                              value == null || value.isEmpty ? "Please enter content" : null,
                             ),
-
-                            SizedBox(height: 20),
-
+                            const SizedBox(height: 20),
                             PrimaryButton(
-                              onTap: () {
+                              onTap: () async {
                                 if (formKey.currentState?.validate() ?? false) {
-                                  final newPost = {
-                                    "title": controllerTitle.text,
-                                    "content": controllerContent.text,
-                                    "timestamp": DateTime.now().toString(),
-                                    "author": controllerAuthor.text.isNotEmpty
-                                        ? controllerAuthor.text
-                                        : "Nate Testing",
-                                  };
+                                  final currentUser = FirebaseAuth.instance.currentUser;
 
-                                  Navigator.pop(context, newPost);
+                                  if (currentUser != null) {
+                                    final userDoc = await FirebaseFirestore.instance
+                                        .collection('users')
+                                        .doc(currentUser.uid)
+                                        .get();
+
+                                    final username = userDoc['username'] ?? "Anonymous";
+
+                                    final newPost = Post(
+                                      id: '',
+                                      title: controllerTitle.text.trim(),
+                                      content: controllerContent.text.trim(),
+                                      author: username,
+                                      timestamp: Timestamp.now(),
+                                    );
+
+                                    Navigator.pop(context, newPost);
+                                  } else {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(content: Text("User not logged in.")),
+                                    );
+                                  }
                                 }
                               },
                               text: "Publish",
                             ),
-
                           ],
                         ),
                       ),
 
-                      SizedBox(height: 20),
-                      
+                      const SizedBox(height: 20),
                     ],
                   ),
                 ),

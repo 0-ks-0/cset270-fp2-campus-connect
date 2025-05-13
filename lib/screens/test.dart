@@ -1,7 +1,8 @@
 import "package:flutter/material.dart";
+import 'package:intl/intl.dart';
+
 
 import "package:cloud_firestore/cloud_firestore.dart";
-import 'package:intl/intl.dart';
 
 import "package:campus_connect/services/firestore_service.dart";
 

@@ -1,22 +1,20 @@
 import "package:flutter/material.dart";
-
 import "package:campus_connect/util/text_field.dart";
 import "package:campus_connect/util/primary_button.dart";
-
 import "package:campus_connect/screens/login_screen.dart";
+import "package:campus_connect/services/auth_service.dart";
 
-class SignUpPage extends StatefulWidget
-{
+class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
 
   @override
   State<SignUpPage> createState() => _SignUpPageState();
 }
 
-class _SignUpPageState extends State<SignUpPage>
-{
+class _SignUpPageState extends State<SignUpPage> {
   final formKey = GlobalKey<FormState>();
 
+  final controllerUsername = TextEditingController();
   final controllerEmail = TextEditingController();
   final controllerPassword = TextEditingController();
   final controllerPasswordConfirm = TextEditingController();
@@ -26,214 +24,180 @@ class _SignUpPageState extends State<SignUpPage>
 
   String errorMessage = "";
 
-  // Toggle password visibility
-  void togglePasswordVisibility()
-  {
-    setState(()
-    {
+  @override
+  void dispose() {
+    controllerUsername.dispose();
+    controllerEmail.dispose();
+    controllerPassword.dispose();
+    controllerPasswordConfirm.dispose();
+    super.dispose();
+  }
+
+  void togglePasswordVisibility() {
+    setState(() {
       passwordIsObscure = !passwordIsObscure;
     });
   }
 
-  // Toggle password visibility
-  void togglePasswordConfirmVisibility()
-  {
-    setState(()
-    {
+  void togglePasswordConfirmVisibility() {
+    setState(() {
       passwordConfirmIsObscure = !passwordConfirmIsObscure;
     });
   }
 
   @override
-  Widget build(BuildContext context)
-  {
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(),
 
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
-
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
-
-            spacing: 28,
-
             children: [
-              // Header
-              Text(
+              const Text(
                 "Create an account",
-
-                style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold
-                ),
+                style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
               ),
+              const SizedBox(height: 28),
 
-              // Form
               Form(
                 key: formKey,
-
                 child: Column(
-                  spacing: 20,
-
                   children: [
-                    // Email input
+                    // Username
+                    MyTextField(
+                      controller: controllerUsername,
+                      hintText: "Enter your username",
+                      obscureText: false,
+                      suffixIcon: null,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return "Please enter your username";
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 20),
+
+                    // Email
                     MyTextField(
                       controller: controllerEmail,
-
                       hintText: "Enter your email address",
                       obscureText: false,
-
                       suffixIcon: null,
-
-                      validator: (value)
-                      {
-                        if (value == null || value.isEmpty)
-                        {
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
                           return "Please enter your email";
                         }
-
-                        String pattern = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$";
-                        RegExp regex = RegExp(pattern);
-
-                        if (!regex.hasMatch(value))
-                        {
+                        final pattern = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$";
+                        final regex = RegExp(pattern);
+                        if (!regex.hasMatch(value)) {
                           return "Please enter a valid email";
                         }
-
                         return null;
                       },
                     ),
+                    const SizedBox(height: 20),
 
-                    // Password input
+                    // Password
                     MyTextField(
                       controller: controllerPassword,
-
                       hintText: "Enter your password",
                       obscureText: passwordIsObscure,
-
                       suffixIcon: IconButton(
                         onPressed: togglePasswordVisibility,
-                        icon: Icon(
-                          passwordIsObscure ? Icons.visibility : Icons.visibility_off
-                        ),
+                        icon: Icon(passwordIsObscure ? Icons.visibility : Icons.visibility_off),
                       ),
-
-                      validator: (value)
-                      {
-                        if (value == null || value.isEmpty)
-                        {
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
                           return "Please enter your password";
                         }
-
-                        if (controllerPassword.text != controllerPasswordConfirm.text)
-                        {
-                          errorMessage += "Passwords do not match";
+                        if (controllerPassword.text != controllerPasswordConfirm.text) {
                           return "Passwords do not match";
                         }
-
                         return null;
                       },
                     ),
+                    const SizedBox(height: 20),
 
-                    // Confirm password input
+                    // Confirm Password
                     MyTextField(
                       controller: controllerPasswordConfirm,
-
                       hintText: "Enter your password again",
                       obscureText: passwordConfirmIsObscure,
-
                       suffixIcon: IconButton(
                         onPressed: togglePasswordConfirmVisibility,
-                        icon: Icon(
-                          passwordConfirmIsObscure ? Icons.visibility : Icons.visibility_off
-                        ),
+                        icon: Icon(passwordConfirmIsObscure ? Icons.visibility : Icons.visibility_off),
                       ),
-
-                      validator: (value)
-                      {
-                        if (value == null || value.isEmpty)
-                        {
-                          return "Please enter your password";
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return "Please confirm your password";
                         }
-
-                        if (controllerPassword.text != controllerPasswordConfirm.text)
-                        {
-                          errorMessage += "Passwords do not match";
+                        if (controllerPassword.text != controllerPasswordConfirm.text) {
                           return "Passwords do not match";
                         }
-
                         return null;
                       },
                     ),
+                    const SizedBox(height: 20),
 
-                    // Sign up button
+                    // Submit Button
                     PrimaryButton(
-                      onTap: ()
-                      {
-                        if (formKey.currentState == null)
-                        {
-                          return;
-                        }
-
-                        // Fails validation
-                        if (!formKey.currentState!.validate())
-                        {
-                          formKey.currentState!.save();
-
-                          return;
-                        }
-
-                        // Success
-                        Navigator.pushAndRemoveUntil(
-                          context,
-                          MaterialPageRoute(builder: (context) => LoginPage()),
-                          (r) => false
-                        );
-                      },
-
                       text: "Sign Up",
-                    )
+                      onTap: () async {
+                        if (formKey.currentState == null) return;
 
+                        if (!formKey.currentState!.validate()) {
+                          return;
+                        }
+
+                        final username = controllerUsername.text.trim();
+                        final email = controllerEmail.text.trim();
+                        final password = controllerPassword.text.trim();
+
+                        final authService = AuthService();
+
+                        authService.register(context, email, password, username).then((user) {
+                          if (user != null) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text("Account created successfully! Please log in.")),
+                            );
+                            Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(builder: (context) => const LoginPage()),
+                                  (r) => false,
+                            );
+                          }
+                        }).catchError((error) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text(error.toString())),
+                          );
+                        });
+                      },
+                    ),
                   ],
                 ),
               ),
 
-              // Login link
+              const SizedBox(height: 24),
+
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
-
-                spacing: 6,
-
                 children: [
-                  // Already have an account
-                  Text(
-                    "Already have an account?",
-
-                    style: TextStyle(
-                      fontSize: 16,
-                    ),
-                  ),
-
-                  // Login Link
+                  const Text("Already have an account?", style: TextStyle(fontSize: 16)),
+                  const SizedBox(width: 6),
                   GestureDetector(
-                    onTap: ()
-                    {
+                    onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => LoginPage()),
+                        MaterialPageRoute(builder: (context) => const LoginPage()),
                       );
                     },
-
-                    child: Text(
+                    child: const Text(
                       "Login",
-                      style: TextStyle(
-                        color: Colors.blue,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600
-                      ),
+                      style: TextStyle(color: Colors.blue, fontSize: 16, fontWeight: FontWeight.w600),
                     ),
                   ),
                 ],
