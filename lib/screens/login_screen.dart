@@ -137,7 +137,6 @@ class _LoginPageState extends State<LoginPage>
                                 (route) => false,
                           );
                         }
-                        // If sign-in failed, AuthService already shows error dialog
                       }, text: 'Login',
                     )],
                 ),
