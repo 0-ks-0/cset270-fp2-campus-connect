@@ -4,6 +4,8 @@ import 'package:campus_connect/models/post.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
+import 'package:campus_connect/services/auth_service.dart';
+import 'login_screen.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -102,8 +104,13 @@ class _HomePageState extends State<HomePage> {
               leading: const Icon(Icons.logout),
               title: const Text("Logout"),
               onTap: () async {
-                await FirebaseAuth.instance.signOut();
-                Navigator.popUntil(context, (route) => route.isFirst);
+                final auth = AuthService();
+                await auth.signOut();
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                      (route) => false,
+                );
               },
             ),
             const SizedBox(height: 20),
