@@ -1,3 +1,4 @@
+import 'package:campus_connect/services/firestore_service.dart';
 import 'package:flutter/material.dart';
 import 'package:campus_connect/screens/create_post_screen.dart';
 import 'package:campus_connect/models/post.dart';
@@ -57,10 +58,12 @@ class _HomePageState extends State<HomePage> {
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: Colors.orange),
             onPressed: () async {
-              await FirebaseFirestore.instance.collection('posts').doc(post.id).update({
-                'title': titleController.text,
-                'content': contentController.text,
-              });
+
+              await FirestoreService().updatePost(post.id, titleController.text, contentController.text);
+              // await FirebaseFirestore.instance.collection('posts').doc(post.id).update({
+              //   'title': titleController.text,
+              //   'content': contentController.text,
+              // });
               Navigator.pop(context);
             },
             child: const Text('Save'),
@@ -71,7 +74,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _deletePost(String id) async {
-    await FirebaseFirestore.instance.collection('posts').doc(id).delete();
+    await FirestoreService().deletePost(id);
   }
 
   @override
@@ -126,7 +129,7 @@ class _HomePageState extends State<HomePage> {
           ),
           Container(color: Colors.black.withOpacity(0.5)),
           StreamBuilder<QuerySnapshot>(
-            stream: FirebaseFirestore.instance.collection('posts').orderBy('timestamp', descending: true).snapshots(),
+            stream: FirestoreService().getPostsStream(),
             builder: (context, snapshot) {
               if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
                 return const Center(child: Text("No posts found", style: TextStyle(color: Colors.white)));
@@ -200,7 +203,8 @@ class _HomePageState extends State<HomePage> {
           );
 
           if (newPost != null && newPost is Post) {
-            await FirebaseFirestore.instance.collection('posts').add(newPost.toMap());
+            // await FirebaseFirestore.instance.collection('posts').add(newPost.toMap());
+            await FirestoreService().createPost(newPost.toMap());
           }
         },
         backgroundColor: Colors.orange,
