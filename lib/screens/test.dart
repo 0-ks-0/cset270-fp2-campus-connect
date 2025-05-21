@@ -1,7 +1,8 @@
 import "package:flutter/material.dart";
+import 'package:intl/intl.dart';
+
 
 import "package:cloud_firestore/cloud_firestore.dart";
-import 'package:intl/intl.dart';
 
 import "package:campus_connect/services/firestore_service.dart";
 
@@ -32,8 +33,8 @@ class _TestState extends State<Test>
       floatingActionButton: FloatingActionButton(
         onPressed: ()
         {
-          fs.createPost("code test", "created through code", "k", null);
-          fs.createPost("code test 2", "created through code", "k", DateTime.now());
+          // fs.createPost("code test", "created through code", "k", null);
+          // fs.createPost("code test 2", "created through code", "k", DateTime.now());
         },
 
         child: Icon(Icons.add),

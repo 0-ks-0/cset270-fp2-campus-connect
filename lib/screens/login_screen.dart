@@ -5,8 +5,8 @@ import "package:campus_connect/util/primary_button.dart";
 
 import "package:campus_connect/screens/register_screen.dart";
 import "package:campus_connect/screens/home_screen.dart";
-import 'package:campus_connect/services/auth_service.dart';
 
+import "../services/auth_service.dart";
 
 class LoginPage extends StatefulWidget
 {
@@ -118,27 +118,27 @@ class _LoginPageState extends State<LoginPage>
                     PrimaryButton(
                       onTap: () async {
                         if (formKey.currentState == null) return;
-                        if (!formKey.currentState!.validate()) return;
+
+                        if (!formKey.currentState!.validate()) {
+                          return;
+                        }
 
                         final email = controllerEmail.text.trim();
                         final password = controllerPassword.text.trim();
 
-                        AuthService authService = AuthService();
+                        final authService = AuthService();
+                        final user = await authService.signIn(context, email, password);
 
-                        authService.signIn(context, email, password).then((user) {
-                          if (user != null) {
-                            Navigator.pushAndRemoveUntil(
-                                context,
-                                MaterialPageRoute(builder: (context) => const HomePage()),
-                                    (r) => false
-                            );
-                          }
-                        });
-
-                      },
-                      text: "Login",
-                    )
-                  ],
+                        if (user != null) {
+                          // Successful login
+                          Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(builder: (context) => const HomePage()),
+                                (route) => false,
+                          );
+                        }
+                      }, text: 'Login',
+                    )],
                 ),
               ),
 

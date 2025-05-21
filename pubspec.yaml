@@ -38,7 +38,7 @@ dependencies:
   permission_handler: ^11.0.0
   firebase_auth: ^5.5.1
   cloud_firestore: ^5.6.7
-  intl: ^0.20.2
+  intl: ^0.18.0
 
 dev_dependencies:
   flutter_test:
@@ -50,17 +50,23 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^5.0.0
+  flutter_launcher_icons: ^0.13.1
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
 # The following section is specific to Flutter packages.
 flutter:
-
-  # The following line ensures that the Material Icons font is
-  # included with your application, so that you can use the icons in
-  # the material Icons class.
+  assets:
+    - assets/logo.png
+    - assets/homepage.jpg
   uses-material-design: true
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/logo.png"
+
 
   # To add assets to your application, add an assets section, like this:
   # assets:
